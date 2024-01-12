@@ -6,7 +6,6 @@ import {useNavigate} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 
 function PostForm({post}) {
-    debugger
     const {register, handleSubmit, watch, setValue, control, getValues} = useForm({
         defaultValues: {
             title: post?.title || '',
@@ -15,22 +14,24 @@ function PostForm({post}) {
             status : post?.status || 'active',
         }
     })
-    debugger
     const navigate = useNavigate()
     const userData = useSelector((state) => state.auth.userData)
-    debugger
+
     const submit = async (data) => {
         try {
             if (post) {
+                debugger
                 const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
                 if (file) {
                     await appwriteService.deleteFile(post.featuredImage); // Assuming deleteFile is asynchronous and returns a promise
                 }
+                debugger
                 const dbPost = await appwriteService.updatePost(post.$id, {...data, featuredImage: file ? file.$id : undefined});
                 if (dbPost) {
                     navigate(`/post/${dbPost.$id}`);
                 }
             } else {
+                debugger
                 const file = await appwriteService.uploadFile(data.image[0]);
                 if (file) {
                     const fileId = file.$id;
@@ -52,18 +53,17 @@ function PostForm({post}) {
 
 
     const slugTransForm = useCallback((value) => {
-        debugger
-        if (value && typeof value === 'string')
+        if (value && typeof value === "string")
             return value
                 .trim()
                 .toLowerCase()
-                .replace(/^[a-zA-Z\d]+/g, '-')
+                .replace(/[^a-zA-Z\d\s]+/g, "-")
+                .replace(/\s/g, "-");
 
-        return ""
-    }, [])
+        return "";
+    }, []);
 
     useEffect(() => {
-        debugger
         const subscription = watch((value, {name}) => {
             if (name === 'title') {
                 setValue('slug', slugTransForm(value.title), {
@@ -93,7 +93,7 @@ function PostForm({post}) {
                     setValue("slug", slugTransForm(e.currentTarget.value), { shouldValidate: true });
                 }}
             />
-            <RTE name="content" label="Content :" control={control} defaultValue={getValues("content")} />
+            <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
         </div>
         <div className="w-1/3 px-2">
             <Input
