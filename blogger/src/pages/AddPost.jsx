@@ -1,13 +1,15 @@
-import React from 'react'
 import { Container, PostForm } from '../components/index'
+import { FormProvider } from 'react-hook-form'
 
 function AddPost() {
     return (
-    <div>
+    <>
         <Container>
-            <PostForm />
+            <FormProvider>
+                <PostForm />
+            </FormProvider>
         </Container>
-    </div>
+    </>
     )
 }
 

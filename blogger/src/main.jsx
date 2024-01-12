@@ -2,21 +2,21 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 import store from './store/store.js';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { AuthLayout } from './components/index.js';
+import { AuthLayout, Login } from './components/index.js';
 import AddPost from "./pages/AddPost";
 import Signup from './pages/Signup'
 import EditPost from "./pages/EditPost";
-import { Login } from './components/index.js'
 import Post from "./pages/Post";
 import AllPosts from "./pages/AllPosts";
+import Home from './pages/Home.jsx'
 
 const router = createBrowserRouter([
   {
     path:'/',
-    element:<App/>,
+    element:<App />,
     children:[
       {
         path:'/',
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
           <AuthLayout authentication={false}>
             <Login />
           </AuthLayout>
-        )
+        ),
 
       },
       {
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
           <AuthLayout authentication={false}>
             <Signup />
           </AuthLayout>
-        )
+        ),
       },
       {
         path:"/all-posts",
@@ -46,7 +46,7 @@ const router = createBrowserRouter([
             {" "}
             <AllPosts />
           </AuthLayout>
-        )
+        ),
       },
       {
         path:'/add-post',
@@ -55,16 +55,16 @@ const router = createBrowserRouter([
             {" "}
             <AddPost />
           </AuthLayout>
-        )
+        ),
       },
       {
-        path:'edit-post/:slug',
+        path:'/edit-post/:slug',
         element: (
           <AuthLayout authentication>
             {" "}
-            <EditPost/>
+            <EditPost />
           </AuthLayout>
-        )
+        ),
       },
       {
         path: "/post/:slug",

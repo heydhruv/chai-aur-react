@@ -44,7 +44,7 @@ export class Service {
     async deletePost(slug) {
         try {
             await this.databases.deleteDocument(conf.appwriteDatabaseId, conf.appwriteCollectionId, slug,)
-            return True
+            return true
         } catch (error) {
             console.error('Error deleting post:', error);
     }
@@ -57,6 +57,36 @@ export class Service {
             console.error('unable to get document', error)
         }
     }
+
+    async getPosts(queries = [Query.equal("status", "active")]){
+        try {
+            return await this.databases.listDocuments(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                queries,
+
+
+            )
+        } catch (error) {
+            console.log("Appwrite serive :: getPosts :: error", error);
+            return false
+        }
+    }
+
+    async getPost(slug){
+        try {
+            return await this.databases.getDocument(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                slug
+            
+            )
+        } catch (error) {
+            console.log("Appwrite serive :: getPost :: error", error);
+            return false
+        }
+    }
+
 
     async listDocuments(queries = [Query.equal("status", "active")]) {
         try {
@@ -91,7 +121,6 @@ export class Service {
             console.error('unable to get file preview', error)
         }
     }
-
 }
 
 

@@ -2,11 +2,11 @@ import React from 'react'
 import {Logo, Container, LogoutBtn} from '../index'
 import { Link } from 'react-router-dom'
 import {useSelector} from 'react-redux'
-import {useNavigation} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status)
-  const navigate = useNavigation();
+  const navigate = useNavigate();
 
   const navItems = [
     {
@@ -37,12 +37,13 @@ function Header() {
 
   ]
   return (
-    <Header className="py-3 shadow bg-gray-500">
+    <header className="py-3 shadow bg-gray-500">
       <Container>
         <nav className='flex'>
           <div className='mr-4'>
-            <Logo width='70px'/>
-            <Link/>
+            <Link to='/'>
+              <Logo width='70px'/>
+            </Link>
           </div>
           <ul className='flex ml-auto'>
             {navItems.map((item) =>
@@ -62,7 +63,7 @@ function Header() {
           </ul>
         </nav>
       </Container>
-    </Header>
+    </header>
   )
 }
 

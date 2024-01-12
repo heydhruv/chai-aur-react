@@ -12,14 +12,14 @@ function Signup() {
   const dispatch = useDispatch()
   const {register, handleSubmit} = useForm()
 
-  const signup = async (data) => {
+  const create = async (data) => {
     setError("")
     try {
       const userData = await authService.createAccount(data)
       if (userData) {
-        const user = await authService.getCurrentUser()
-        if (user) {
-          dispatch(login(user))
+        const userData = await authService.getCurrentUser()
+        if (userData) {
+          dispatch(login(userData))
         }
         navigate('/')
       }
@@ -29,7 +29,7 @@ function Signup() {
   }
   return (
     <div className="flex items-center justify-center">
-            <div className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}>
+            <div className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black-10`}>
             <div className="mb-2 flex justify-center">
                     <span className="inline-block w-full max-w-[100px]">
                         <Logo width="100%" />
@@ -47,7 +47,7 @@ function Signup() {
                 </p>
                 {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
 
-                <form onSubmit={handleSubmit(signup)}>
+                <form onSubmit={handleSubmit(create)}>
                     <div className='space-y-5'>
                         <Input
                         label="Full Name: "
@@ -63,7 +63,7 @@ function Signup() {
                         {...register("email", {
                             required: true,
                             validate: {
-                                matchPatern: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
+                              matchPatern: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
                                 "Email address must be a valid address",
                             }
                         })}
@@ -75,7 +75,7 @@ function Signup() {
                         {...register("password", {
                             required: true,
                             validate: {
-                              matchPattern: (value) => /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(value) ||
+                              matchPatern: (value) => /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(value) ||
                               "Password must be a valid password",
                           }
                           })}

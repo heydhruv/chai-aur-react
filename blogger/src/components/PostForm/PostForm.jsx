@@ -1,71 +1,78 @@
 import React, {useCallback, useEffect} from 'react'
 import { useForm } from 'react-hook-form'
-import {Button,Input ,Select, RTE} from '../index/'
+import {Button, Input, Select, RTE} from '../index'
 import appwriteService from '../../appwrite/config'
 import {useNavigate} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 
 function PostForm({post}) {
+    debugger
     const {register, handleSubmit, watch, setValue, control, getValues} = useForm({
         defaultValues: {
             title: post?.title || '',
-            slug: post?.slug || '',
+            slug: post?.$id || '',
             content: post?.content || '',
             status : post?.status || 'active',
         }
     })
+    debugger
     const navigate = useNavigate()
-    const userData = useSelector(state => state.user.userData)
-
-    const submit = async(data) => {
-        if (post) {
-            const file = data.image[0] ? appwriteService.uploadFile(data.image[0]): null
-            if (file) {
-                appwriteService.deleteFile(post.featuredImage, file)
-            }
-            const dbPost = await appwriteService.updatePost(post.$id,{...data, featuredImage : file? file.$id : undefined})
-            if (dbPost) {
-                navigate(`/post/${dbPost.$id}`)
-            }
-        }
-        else {
-            const file = await appwriteService.uploadFile(data.image[0]);
-            if (file) {
-                const fileId = file.$id
-                data.featuredImage = fileId
-                const dbPost = await appwriteService.createFile({
-                    ...data,
-                    userId : userData.userId,
-                })
+    const userData = useSelector((state) => state.auth.userData)
+    debugger
+    const submit = async (data) => {
+        try {
+            if (post) {
+                const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+                if (file) {
+                    await appwriteService.deleteFile(post.featuredImage); // Assuming deleteFile is asynchronous and returns a promise
+                }
+                const dbPost = await appwriteService.updatePost(post.$id, {...data, featuredImage: file ? file.$id : undefined});
                 if (dbPost) {
-                    navigate(`/post/${dbPost.$id}`)
+                    navigate(`/post/${dbPost.$id}`);
+                }
+            } else {
+                const file = await appwriteService.uploadFile(data.image[0]);
+                if (file) {
+                    const fileId = file.$id;
+                    data.featuredImage = fileId;
+                    const dbPost = await appwriteService.createPost({
+                        ...data,
+                        userId: userData.$id,
+                    });
+                    if (dbPost) {
+                        navigate(`/post/${dbPost.$id}`);
+                    }
                 }
             }
+        } catch (error) {
+            // Handle errors here, e.g., show an error message to the user
+            console.error('An error occurred:', error);
         }
-    }
+    };
+
 
     const slugTransForm = useCallback((value) => {
-        if (value && typeof value === 'string') {
+        debugger
+        if (value && typeof value === 'string')
             return value
-            .trim()
-            .toLowerCase()
-            .replace(/^[a-zA-Z\d]+/g, '-')
-        }
+                .trim()
+                .toLowerCase()
+                .replace(/^[a-zA-Z\d]+/g, '-')
+
         return ""
     }, [])
 
     useEffect(() => {
+        debugger
         const subscription = watch((value, {name}) => {
             if (name === 'title') {
-                setValue('slug', slugTransForm(value.title, {
+                setValue('slug', slugTransForm(value.title), {
                     shouldValidate:true
-                }));
+                });
             }
         })
 
-        return () => {
-            subscription.unsubscribe()
-        }
+        return () => subscription.unsubscribe()
     }, [watch, slugTransForm, setValue])
 
     return (
@@ -86,7 +93,7 @@ function PostForm({post}) {
                     setValue("slug", slugTransForm(e.currentTarget.value), { shouldValidate: true });
                 }}
             />
-            <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+            <RTE name="content" label="Content :" control={control} defaultValue={getValues("content")} />
         </div>
         <div className="w-1/3 px-2">
             <Input
